@@ -45,7 +45,10 @@ public static class SwaggerConfiguration
         app.UseSwaggerUI(options =>
         {
             options.RoutePrefix = settings.RoutePrefix;
-            options.SwaggerEndpoint($"/{settings.JsonRoute}", settings.Title);
+            string documentUrl = settings.JsonRoute
+                .Replace("{documentName}", settings.Version, StringComparison.Ordinal);
+
+            options.SwaggerEndpoint($"/{documentUrl}", settings.Title);
             options.DocumentTitle = settings.Title;
         });
 
