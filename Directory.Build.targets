@@ -1,0 +1,5 @@
+<Project>
+  <Target Name="ValidateTemplateBuild" BeforeTargets="Build">
+    <Message Importance="Low" Text="Building $(MSBuildProjectName) for $(TargetFramework)" />
+  </Target>
+</Project>
