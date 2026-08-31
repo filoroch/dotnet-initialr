@@ -48,7 +48,7 @@ public sealed class UsuarioAppService(
     public async Task<PaginatedResult<UsuarioQueryResponse>> ListarAsync(ListarUsuariosRequest request, CancellationToken cancellationToken = default)
     {
         ListarUsuariosFilter filter = request.Adapt<ListarUsuariosFilter>();
-        IQueryable<UsuarioQuery> query = _repository.Filtrar(filter);
+        ListarUsuariosQuery query = _repository.Filtrar(filter);
 
         PaginatedResult<UsuarioQuery> result = await _repository.ListarAsync(
             query, request.Quantity, request.Page,

@@ -11,7 +11,7 @@ builder.Host.UseProjectSerilog(builder.Configuration);
 // Add services to the container.
 
 builder.Services.AddControllers();
-builder.Services.AddProjectDependencies(builder.Configuration);
+builder.Services.AddProjectApiDependencies(builder.Configuration);
 
 WebApplication app = builder.Build();
 
@@ -23,8 +23,11 @@ app.UseProjectSwagger(builder.Configuration);
 
 app.UseHttpsRedirection();
 
+app.UseCors();
+app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapHealthChecks("/health").AllowAnonymous();
 app.MapControllers();
 
 app.Run();

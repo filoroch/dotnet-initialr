@@ -22,6 +22,7 @@ public sealed class GlobalExceptionHandler(
 
         var status = exception switch
         {
+            AutenticacaoException => StatusCodes.Status401Unauthorized,
             RegistroNaoEncontradoException => StatusCodes.Status404NotFound,
             PermissaoNegadaException => StatusCodes.Status403Forbidden,
             PropriedadeObrigatoriaException => StatusCodes.Status400BadRequest,
@@ -55,6 +56,7 @@ public sealed class GlobalExceptionHandler(
     private static string GetTitle(int status) => status switch
     {
         StatusCodes.Status400BadRequest => "Requisição inválida",
+        StatusCodes.Status401Unauthorized => "Não autenticado",
         StatusCodes.Status403Forbidden => "Acesso negado",
         StatusCodes.Status404NotFound => "Registro não encontrado",
         StatusCodes.Status422UnprocessableEntity => "Operação não permitida",

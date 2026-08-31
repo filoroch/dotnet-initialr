@@ -1,41 +1,57 @@
 using Filoroch.Template.CrossCutting.Exceptions;
 using Filoroch.Template.CrossCutting.Extensions;
+using Filoroch.Template.Domain.Usuarios.Enums;
 
 namespace Filoroch.Template.Domain.Usuarios.Entities;
 
 public sealed class Usuario
 {
     public Guid Id { get; private set; }
-    public string Nome { get; private set; } = string.Empty;
+    public string Username { get; private set; } = string.Empty;
     public string Email { get; private set; } = string.Empty;
     public bool Ativo { get; private set; }
+    public string SenhaHash { get; private set; } = string.Empty;
+    public PerfilUsuario Perfil { get; private set; } = PerfilUsuario.User;
+    public DateTime CriadoEm { get; private set; }
+    public DateTime AtualizadoEm { get; private set; }
 
     protected Usuario() { }
     
-    public Usuario(string nome, string email)
+    public Usuario(string username, string email, string senhaHash, PerfilUsuario perfil = PerfilUsuario.User)
     {
         Id = Guid.NewGuid();
-        SetNome(nome);
+        SetUsername(username);
         SetEmail(email);
+        SetSenhaHash(senhaHash);
+        Perfil = perfil;
+        CriadoEm = DateTime.UtcNow;
+        AtualizadoEm = CriadoEm;
         
         Ativar();
     }
 
     public void Ativar() => Ativo = true;
 
-    public void Atualizar(string nome, string email)
+    public void Atualizar(string username, string email)
     {
-        if (!string.IsNullOrWhiteSpace(nome) && nome != Nome)
-            SetNome(nome);
+        if (!string.IsNullOrWhiteSpace(username) && username != Username)
+            SetUsername(username);
 
         if (!string.IsNullOrWhiteSpace(email) && email != Email)
             SetEmail(email);
     }
 
-    private void SetNome(string nome)
+    public void AlterarSenhaHash(string senhaHash) => SetSenhaHash(senhaHash);
+
+    public void AtualizarDataModificacao() => AtualizadoEm = DateTime.UtcNow;
+
+    private void SetUsername(string username)
     {
-        Nome = nome.ValidarObrigatoria(nameof(Nome), minLength: 3, maxLength: 100);
+        Username = username.ValidarObrigatoria(nameof(Username), minLength: 3, maxLength: 100);
     }
+
+    private void SetSenhaHash(string senhaHash)
+        => SenhaHash = senhaHash.ValidarObrigatoria(nameof(SenhaHash));
 
     private void SetEmail(string email)
     {
