@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
+using System.Reflection;
 
 namespace Filoroch.Template.IoC.Configurations;
 
@@ -23,6 +24,11 @@ public static class AppSettingsConfiguration
                 $"Settings/appsettings.{environment.EnvironmentName}.json",
                 optional: true,
                 reloadOnChange: true);
+
+        if (environment.IsDevelopment())
+            configuration.AddUserSecrets(Assembly.GetEntryAssembly()!, optional: true);
+
+        configuration.AddEnvironmentVariables();
 
         return configuration;
     }

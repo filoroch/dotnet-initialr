@@ -11,12 +11,15 @@ namespace Filoroch.Template.Domain.Tests.Usuarios.Services;
 public class UsuarioServiceTests
 {
     protected readonly IUsuarioRepository usuarioRepository;
+    protected readonly IPasswordService passwordService;
     protected readonly UsuariosService sut;
 
     public UsuarioServiceTests()
     {
         usuarioRepository = Substitute.For<IUsuarioRepository>();
-        sut = new UsuariosService(usuarioRepository);
+        passwordService = Substitute.For<IPasswordService>();
+        passwordService.Hash(Arg.Any<string>()).Returns("hash");
+        sut = new UsuariosService(usuarioRepository, passwordService);
     }
 
     public class CriarAsync : UsuarioServiceTests
@@ -29,9 +32,9 @@ public class UsuarioServiceTests
                 .Returns(false);
 
             Usuario result = await sut.CriarAsync(
-                new CriarUsuarioCommand("Filipe Rocha", "filipe@email.com"));
+                new CriarUsuarioCommand("Filipe Rocha", "filipe@email.com", "Senha123!"));
 
-            result.Nome.Should().Be("Filipe Rocha");
+            result.Username.Should().Be("Filipe Rocha");
             result.Email.Should().Be("filipe@email.com");
             result.Ativo.Should().BeTrue();
 
@@ -48,7 +51,7 @@ public class UsuarioServiceTests
                 .Returns(true);
 
             Func<Task<Usuario>> action = () => sut.CriarAsync(
-                new CriarUsuarioCommand("Filipe Rocha", "filipe@email.com"));
+                new CriarUsuarioCommand("Filipe Rocha", "filipe@email.com", "Senha123!"));
 
             await action.Should().ThrowAsync<OperacaoNaoPermitidaException>()
                 .WithMessage("Já existe um usuário com este e-mail.");
@@ -63,7 +66,7 @@ public class UsuarioServiceTests
         [Fact]
         public async Task Dado_DadosValidos_Espero_AtualizarUsuario()
         {
-            Usuario usuario = new("Nome antigo", "antigo@email.com");
+            Usuario usuario = new("Nome antigo", "antigo@email.com", "hash");
             usuarioRepository.GetByIdAsync(usuario.Id, Arg.Any<CancellationToken>())
                 .Returns(usuario);
             usuarioRepository.ExistePorEmailAsync("novo@email.com", Arg.Any<CancellationToken>())
@@ -72,12 +75,12 @@ public class UsuarioServiceTests
             await sut.AtualizarAsync(new AtualizarUsuarioCommand(
                 usuario.Id, "Nome novo", "novo@email.com"));
 
-            usuario.Nome.Should().Be("Nome novo");
+            usuario.Username.Should().Be("Nome novo");
             usuario.Email.Should().Be("novo@email.com");
 
             await usuarioRepository.Received(1).UpdateAsync(
                 Arg.Is<Usuario>(item => item.Id == usuario.Id
-                    && item.Nome == "Nome novo"
+                    && item.Username == "Nome novo"
                     && item.Email == "novo@email.com"),
                 Arg.Any<CancellationToken>());
         }
@@ -102,7 +105,7 @@ public class UsuarioServiceTests
         [Fact]
         public async Task Dado_EmailJaCadastrado_Espero_LancarExcecaoENaoAtualizar()
         {
-            Usuario usuario = new("Nome", "atual@email.com");
+            Usuario usuario = new("Nome", "atual@email.com", "hash");
             usuarioRepository.GetByIdAsync(usuario.Id, Arg.Any<CancellationToken>())
                 .Returns(usuario);
             usuarioRepository.ExistePorEmailAsync("ocupado@email.com", Arg.Any<CancellationToken>())
@@ -114,7 +117,7 @@ public class UsuarioServiceTests
             await action.Should().ThrowAsync<OperacaoNaoPermitidaException>()
                 .WithMessage("Já existe um usuário com este e-mail.");
 
-            usuario.Nome.Should().Be("Nome");
+            usuario.Username.Should().Be("Nome");
             usuario.Email.Should().Be("atual@email.com");
             await usuarioRepository.DidNotReceive().UpdateAsync(
                 Arg.Any<Usuario>(), Arg.Any<CancellationToken>());
@@ -123,13 +126,13 @@ public class UsuarioServiceTests
         [Fact]
         public async Task Dado_NomeEEmailNaoInformados_Espero_ManterDadosEAtualizarRepositorio()
         {
-            Usuario usuario = new("Nome", "email@email.com");
+            Usuario usuario = new("Nome", "email@email.com", "hash");
             usuarioRepository.GetByIdAsync(usuario.Id, Arg.Any<CancellationToken>())
                 .Returns(usuario);
 
             await sut.AtualizarAsync(new AtualizarUsuarioCommand(usuario.Id, "", ""));
 
-            usuario.Nome.Should().Be("Nome");
+            usuario.Username.Should().Be("Nome");
             usuario.Email.Should().Be("email@email.com");
             await usuarioRepository.Received(1).UpdateAsync(
                 Arg.Is<Usuario>(item => item.Id == usuario.Id),

@@ -12,7 +12,7 @@ public class UsuarioTests
 
     public UsuarioTests()
     {
-        sut = new Usuario("Filipe Rocha", "email@example.com");
+        sut = new Usuario("Filipe Rocha", "email@example.com", "hash");
     }
 
     public class Construtor : UsuarioTests
@@ -20,9 +20,9 @@ public class UsuarioTests
         [Fact]
         public void Dado_DadosValidos_Espero_CriarUsuario()
         {
-            sut = new ("Filipe Rocha", "FILIPE@EMAIL.COM");
+            sut = new ("Filipe Rocha", "FILIPE@EMAIL.COM", "hash");
 
-            sut.Nome.Should().Be("Filipe Rocha");
+            sut.Username.Should().Be("Filipe Rocha");
             sut.Email.Should().Be("filipe@email.com");
             sut.Ativo.Should().BeTrue();
         } 
@@ -35,7 +35,7 @@ public class UsuarioTests
         {
             sut.Atualizar("Novo Nome", "novoemail@example.com");
 
-            sut.Nome.Should().Be("Novo Nome");
+            sut.Username.Should().Be("Novo Nome");
             sut.Email.Should().Be("novoemail@example.com");
         }
 
@@ -56,7 +56,7 @@ public class UsuarioTests
 
             var ex = act.Should().Throw<PropriedadeInvalidaException>();
 
-            ex.WithMessage("A propriedade 'Nome' é inválida. deve possuir no mínimo 3 caracteres.");
+            ex.WithMessage("A propriedade 'Username' é inválida. deve possuir no mínimo 3 caracteres.");
         }
     }
 }
