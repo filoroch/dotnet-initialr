@@ -1,0 +1,6 @@
+namespace {{RootNamespace}}.Application.{{Context}}.DataTransfer.Requests;
+
+public sealed class Criar{{Entity}}Request
+{
+    // TODO: adicionar os dados de entrada.
+}

@@ -1,0 +1,7 @@
+namespace {{RootNamespace}}.Domain.{{Context}}.Queries;
+
+public sealed class Listar{{Context}}Query
+{
+    public string? Nome { get; init; }
+    public bool? Ativo { get; init; }
+}

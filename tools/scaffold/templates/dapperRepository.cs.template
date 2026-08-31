@@ -1,0 +1,33 @@
+using {{RootNamespace}}.CrossCutting.Persistence.Pagination;
+using {{RootNamespace}}.Domain.{{Context}}.Entities;
+using {{RootNamespace}}.Domain.{{Context}}.Filters;
+using {{RootNamespace}}.Domain.{{Context}}.Queries;
+using {{RootNamespace}}.Domain.{{Context}}.Repositories;
+using System.Data.Common;
+using Dapper;
+using {{RootNamespace}}.Infra.Persistence;
+
+namespace {{RootNamespace}}.Infra.{{Context}}.Repositories;
+
+public sealed class {{Entity}}DapperRepository(DapperConnection holder) : I{{Entity}}DapperRepository
+{
+    private readonly DbConnection connection = holder.Connection;
+    public Listar{{Context}}Query Filtrar(Listar{{Context}}Filter filter) => new() { Nome = filter.Nome, Ativo = filter.Ativo };
+    public async Task<PaginatedResult<{{Entity}}Query>> ListarAsync(Listar{{Context}}Query query, int? quantity, int? page, string? orderBy, OrderType? orderType, CancellationToken cancellationToken = default)
+    {
+        int take = quantity is > 0 and <= 100 ? quantity.Value : 20;
+        int skip = ((page is > 0 ? page.Value : 1) - 1) * take;
+        var parameters = new { skip, take };
+        string pagination = connection.GetType().Name.Contains("Sqlite", StringComparison.OrdinalIgnoreCase) || connection.GetType().Name.Contains("Npgsql", StringComparison.OrdinalIgnoreCase)
+            ? "LIMIT @take OFFSET @skip"
+            : "OFFSET @skip ROWS FETCH NEXT @take ROWS ONLY";
+        using SqlMapper.GridReader grid = await connection.QueryMultipleAsync(new CommandDefinition($"SELECT COUNT(1) FROM {{Context}}; SELECT Id FROM {{Context}} ORDER BY Id {{pagination}}", parameters, cancellationToken: cancellationToken));
+        int total = await grid.ReadSingleAsync<int>();
+        var items = (await grid.ReadAsync<{{Entity}}Query>()).ToList();
+        return new PaginatedResult<{{Entity}}Query>(items, total);
+    }
+    public Task<{{Entity}}?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default) => connection.QuerySingleOrDefaultAsync<{{Entity}}>(new CommandDefinition("SELECT * FROM {{Context}} WHERE Id = @id", new { id }, cancellationToken: cancellationToken));
+    public async Task AddAsync({{Entity}} entity, CancellationToken cancellationToken = default) => await connection.ExecuteAsync(new CommandDefinition("INSERT INTO {{Context}} (Id) VALUES (@Id)", entity, cancellationToken: cancellationToken));
+    public async Task UpdateAsync({{Entity}} entity, CancellationToken cancellationToken = default) => await connection.ExecuteAsync(new CommandDefinition("UPDATE {{Context}} SET Id = @Id WHERE Id = @Id", entity, cancellationToken: cancellationToken));
+    public void Remove({{Entity}} entity) => connection.Execute("DELETE FROM {{Context}} WHERE Id = @Id", new { entity.Id });
+}

@@ -1,4 +1,5 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
     <ProjectReference Include="..\..\Domain\Filoroch.Template.Domain\Filoroch.Template.Domain.csproj" />
@@ -11,14 +12,16 @@
     <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.18.0" />
     <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.18.0" />
     <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.18.0" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.EntityFrameworkCore" Version="1.18.0-beta.1" />
     <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.18.0" />
     <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" Version="1.18.0" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.SqlClient" Version="1.18.0" />
     <PackageReference Include="Scrutor" Version="7.0.0" />
     <PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
     <PackageReference Include="Serilog.Settings.Configuration" Version="10.0.1" />
     <PackageReference Include="Serilog.Sinks.Console" Version="6.1.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="10.2.3" />
-  </ItemGroup>
+  <PackageReference Include="Npgsql" Version="10.0.0" /></ItemGroup>
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -27,13 +30,33 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.9" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.19.1" />
+    <PackageReference Include="BCrypt.Net-Next" Version="4.2.0" />
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <TemplateSelectedProviders>efcore|nhibernate|dapper|mongo</TemplateSelectedProviders>
+    <TemplateSelectedDrivers>sqlite|sqlserver|postgresql|mongodb</TemplateSelectedDrivers>
+    <TemplateSelectedProvidersOverride>__TEMPLATE_SELECTED_PROVIDERS__|nhibernate</TemplateSelectedProvidersOverride>
+    <TemplateSelectedDriversOverride>__TEMPLATE_SELECTED_DRIVERS__|postgresql</TemplateSelectedDriversOverride>
+    <TemplateSelectedProviders Condition="$([System.String]::Copy('$(TemplateSelectedProvidersOverride)').Contains('TEMPLATE')) == 'False'">$(TemplateSelectedProvidersOverride)</TemplateSelectedProviders>
+    <TemplateSelectedDrivers Condition="$([System.String]::Copy('$(TemplateSelectedDriversOverride)').Contains('TEMPLATE')) == 'False'">$(TemplateSelectedDriversOverride)</TemplateSelectedDrivers>
+  </PropertyGroup>
+
   <ItemGroup>
-    <None Update="Settings\appsettings*.json"
-          CopyToOutputDirectory="PreserveNewest"
-          CopyToPublishDirectory="PreserveNewest" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.11" Condition="$([System.String]::Copy('$(TemplateSelectedProviders)').Contains('efcore')) and $([System.String]::Copy('$(TemplateSelectedDrivers)').Contains('sqlite'))" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.11" Condition="$([System.String]::Copy('$(TemplateSelectedProviders)').Contains('efcore'))" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0" Condition="$([System.String]::Copy('$(TemplateSelectedProviders)').Contains('efcore'))" />
+    <PackageReference Include="NHibernate" Version="5.5.2" Condition="$([System.String]::Copy('$(TemplateSelectedProviders)').Contains('nhibernate'))" />
+    <PackageReference Include="FluentNHibernate" Version="3.4.0" Condition="$([System.String]::Copy('$(TemplateSelectedProviders)').Contains('nhibernate'))" />
+    <PackageReference Include="Dapper" Version="2.1.66" Condition="$([System.String]::Copy('$(TemplateSelectedProviders)').Contains('dapper'))" />
+    <PackageReference Include="MongoDB.Driver" Version="3.4.0" Condition="$([System.String]::Copy('$(TemplateSelectedProviders)').Contains('mongo')) and $([System.String]::Copy('$(TemplateSelectedDrivers)').Contains('mongodb'))" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Settings\appsettings*.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,14 @@
+using {{RootNamespace}}.Domain.{{Context}}.Entities;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace {{RootNamespace}}.Infra.{{Context}}.Mappings;
+
+public sealed class {{Entity}}EfMapping : IEntityTypeConfiguration<{{Entity}}>
+{
+    public void Configure(EntityTypeBuilder<{{Entity}}> builder)
+    {
+        builder.ToTable("{{Context}}");
+        builder.HasKey(entity => entity.Id);
+    }
+}

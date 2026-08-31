@@ -1,0 +1,21 @@
+using System.Data.Common;
+
+namespace Filoroch.Template.Infra.Persistence;
+
+public static class DbConnectionFactory
+{
+    public static DbConnection Create(string driver, string connectionString)
+    {
+        string invariantName = driver.Trim().ToLowerInvariant() switch
+        {
+            "sqlite" => "Microsoft.Data.Sqlite",
+            "sqlserver" => "Microsoft.Data.SqlClient",
+            "postgresql" => "Npgsql",
+            _ => throw new InvalidOperationException($"Driver ADO.NET não suportado: {driver}.")
+        };
+        DbConnection connection = DbProviderFactories.GetFactory(invariantName).CreateConnection()
+            ?? throw new InvalidOperationException($"Não foi possível criar a conexão do driver {driver}.");
+        connection.ConnectionString = connectionString;
+        return connection;
+    }
+}

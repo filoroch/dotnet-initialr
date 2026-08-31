@@ -1,0 +1,32 @@
+using {{RootNamespace}}.CrossCutting.Persistence.Repositories.Implementations.EFCore;
+using {{RootNamespace}}.CrossCutting.Persistence.Pagination;
+using {{RootNamespace}}.Domain.{{Context}}.Entities;
+using {{RootNamespace}}.Domain.{{Context}}.Filters;
+using {{RootNamespace}}.Domain.{{Context}}.Queries;
+using {{RootNamespace}}.Domain.{{Context}}.Repositories;
+using {{RootNamespace}}.Infra.Persistence;
+using Microsoft.EntityFrameworkCore;
+
+namespace {{RootNamespace}}.Infra.{{Context}}.Repositories;
+
+public sealed class {{Entity}}EfRepository(TemplateDbContext dbContext)
+    : EFCoreRepository<{{Entity}}, Guid>(dbContext), I{{Entity}}EfRepository
+{
+    public Listar{{Context}}Query Filtrar(Listar{{Context}}Filter filter)
+        => new() { Nome = filter.Nome, Ativo = filter.Ativo };
+
+    public async Task<PaginatedResult<{{Entity}}Query>> ListarAsync(
+        Listar{{Context}}Query query, int? quantity, int? page, string? orderBy,
+        OrderType? orderType, CancellationToken cancellationToken = default)
+    {
+        IQueryable<{{Entity}}> source = Context.Set<{{Entity}}>().AsNoTracking();
+        int take = quantity is > 0 and <= 100 ? quantity.Value : 20;
+        int skip = ((page is > 0 ? page.Value : 1) - 1) * take;
+        int total = await source.CountAsync(cancellationToken);
+        source = orderType == OrderType.Descending
+            ? source.OrderByDescending(entity => EF.Property<object>(entity, orderBy ?? "Id"))
+            : source.OrderBy(entity => EF.Property<object>(entity, orderBy ?? "Id"));
+        var items = await source.Skip(skip).Take(take).Select(entity => new {{Entity}}Query { Id = entity.Id }).ToListAsync(cancellationToken);
+        return new PaginatedResult<{{Entity}}Query>(items, total);
+    }
+}

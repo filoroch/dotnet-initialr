@@ -1,0 +1,6 @@
+namespace {{RootNamespace}}.Infra.{{Context}}.Mappings;
+
+public static class {{Entity}}DapperMapping
+{
+    public const string TableName = "{{Context}}";
+}

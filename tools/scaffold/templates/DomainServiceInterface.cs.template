@@ -1,0 +1,6 @@
+namespace {{RootNamespace}}.Domain.{{Context}}.Services;
+
+public interface I{{Context}}Service
+{
+    // TODO: adicionar operações do contexto.
+}

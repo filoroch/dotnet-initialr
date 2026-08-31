@@ -1,0 +1,7 @@
+using {{RootNamespace}}.Domain.{{Context}}.Repositories;
+
+namespace {{RootNamespace}}.Domain.{{Context}}.Repositories;
+
+public interface I{{Entity}}EfRepository : I{{Entity}}Repository
+{
+}

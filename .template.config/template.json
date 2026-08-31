@@ -1,14 +1,151 @@
 {
   "$schema": "http://json.schemastore.org/template",
-  "author": "Filoroch",
+  "author": "filoroch",
   "classifications": ["Solution", ".NET", "DDD", "Clean Architecture"],
   "identity": "Filoroch.Template.Solution",
-  "name": "Filoroch .NET Solution",
-  "shortName": "filoroch-solution",
-  "sourceName": "Filoroch.Template",
+  "name": "Filoroch Dotnet Intialr",
+  "shortName": "filoroch-scaffold-solution",
+  "sourceName": "filoroch-dotnet-initialr",
   "preferNameDirectory": true,
+  "symbols": {
+    "provider": {
+      "type": "parameter",
+      "datatype": "choice",
+      "allowMultipleValues": true,
+      "defaultValue": "efcore",
+      "description": "Provider de persistência inicial. Use efcore, nhibernate, dapper ou mongo.",
+      "choices": [
+        { "choice": "efcore", "description": "Entity Framework Core" },
+        { "choice": "nhibernate", "description": "NHibernate com FluentNHibernate" },
+        { "choice": "dapper", "description": "Dapper" },
+        { "choice": "mongo", "description": "MongoDB" }
+      ]
+    },
+    "driver": {
+      "type": "parameter",
+      "datatype": "choice",
+      "allowMultipleValues": true,
+      "defaultValue": "sqlite",
+      "description": "Driver/banco do provider inicial.",
+      "choices": [
+        { "choice": "sqlite", "description": "SQLite" },
+        { "choice": "sqlserver", "description": "SQL Server" },
+        { "choice": "postgresql", "description": "PostgreSQL" },
+        { "choice": "mongodb", "description": "MongoDB" }
+      ]
+    },
+    "defaultProvider": {
+      "type": "generated",
+      "generator": "regex",
+      "replaces": "__TEMPLATE_DEFAULT_PROVIDER__",
+      "parameters": {
+        "source": "provider",
+        "steps": [
+          { "regex": "\\|.*$", "replacement": "" }
+        ]
+      }
+    },
+    "defaultDriver": {
+      "type": "generated",
+      "generator": "regex",
+      "replaces": "__TEMPLATE_DEFAULT_DRIVER__",
+      "parameters": {
+        "source": "driver",
+        "steps": [
+          { "regex": "\\|.*$", "replacement": "" }
+        ]
+      }
+    },
+    "selectedProviders": {
+      "type": "generated",
+      "generator": "join",
+      "replaces": "__TEMPLATE_SELECTED_PROVIDERS__",
+      "parameters": {
+        "symbols": [{ "type": "ref", "value": "provider" }],
+        "separator": "|",
+        "removeEmptyValues": true
+      }
+    },
+    "selectedDrivers": {
+      "type": "generated",
+      "generator": "join",
+      "replaces": "__TEMPLATE_SELECTED_DRIVERS__",
+      "parameters": {
+        "symbols": [{ "type": "ref", "value": "driver" }],
+        "separator": "|",
+        "removeEmptyValues": true
+      }
+    }
+  },
   "tags": {
     "language": "C#",
     "type": "solution"
-  }
+  },
+  "sources": [
+    {
+      "source": "./",
+      "modifiers": [
+        {
+          "condition": "!(provider == \"efcore\")",
+          "exclude": [
+            "src/IoC/**/Configurations/Persistence/EfCorePersistenceModule.cs",
+            "src/Infrastructure/**/Persistence/TemplateDbContext.cs",
+            "src/Infrastructure/**/Usuarios/Mappings/UsuarioEfMapping.cs",
+            "src/Infrastructure/**/Usuarios/Repositories/UsuarioRepository.cs"
+          ]
+        },
+        {
+          "condition": "!(provider == \"nhibernate\")",
+          "exclude": [
+            "src/IoC/**/Configurations/Persistence/NHibernatePersistenceModule.cs",
+            "src/Domain/**/Repositories/*NHibernateRepository.cs",
+            "src/Infrastructure/**/Persistence/NHibernateUnitOfWork.cs",
+            "src/Infrastructure/**/Usuarios/Mappings/*NHibernateMapping.cs",
+            "src/Infrastructure/**/Usuarios/Repositories/*NHibernateRepository.cs"
+          ]
+        },
+        {
+          "condition": "!(provider == \"dapper\")",
+          "exclude": [
+            "src/IoC/**/Configurations/Persistence/DapperPersistenceModule.cs",
+            "src/Domain/**/Repositories/*DapperRepository.cs",
+            "src/Infrastructure/**/Persistence/DapperConnection.cs",
+            "src/Infrastructure/**/Persistence/DapperUnitOfWork.cs",
+            "src/Infrastructure/**/Usuarios/Mappings/*DapperMapping.cs",
+            "src/Infrastructure/**/Usuarios/Repositories/*DapperRepository.cs"
+          ]
+        },
+        {
+          "condition": "!(provider == \"mongo\")",
+          "exclude": [
+            "src/IoC/**/Configurations/Persistence/MongoPersistenceModule.cs",
+            "src/Domain/**/Repositories/*MongoRepository.cs",
+            "src/Infrastructure/**/Persistence/MongoUnitOfWork.cs",
+            "src/Infrastructure/**/Usuarios/Mappings/*MongoMapping.cs",
+            "src/Infrastructure/**/Usuarios/Repositories/*MongoRepository.cs"
+          ]
+        }
+      ]
+    },
+    {
+      "source": "template-assets/efcore",
+      "target": "./",
+      "condition": "provider == \"efcore\""
+    },
+    {
+      "source": "template-assets/nhibernate",
+      "target": "./",
+      "condition": "provider == \"nhibernate\""
+    },
+    {
+      "source": "template-assets/dapper",
+      "target": "./",
+      "condition": "provider == \"dapper\""
+    },
+    {
+      "source": "template-assets/mongo",
+      "target": "./",
+      "condition": "provider == \"mongo\""
+    }
+  ]
 }

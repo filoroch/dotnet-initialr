@@ -1,0 +1,6 @@
+namespace {{RootNamespace}}.Application.{{Context}}.DataTransfer.Responses;
+
+public sealed class {{Entity}}Response
+{
+    public Guid Id { get; init; }
+}

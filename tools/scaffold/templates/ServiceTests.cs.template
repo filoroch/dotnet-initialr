@@ -1,0 +1,15 @@
+using Xunit;
+
+namespace {{RootNamespace}}.Domain.Tests.{{Context}}.Services;
+
+public class {{Context}}ServiceTests
+{
+    public class Operacao
+    {
+        [Fact]
+        public void Dado_Cenario_Espero_Comportamento()
+        {
+            // TODO: seguir o padrão de testes do contexto de Usuários.
+        }
+    }
+}

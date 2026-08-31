@@ -1,0 +1,39 @@
+using NHibernate;
+using {{RootNamespace}}.CrossCutting.Persistence.UnitOfWork.Interfaces;
+
+namespace {{RootNamespace}}.Infra.Persistence;
+
+public sealed class NHibernateUnitOfWork(ISession session) : INHibernateUnitOfWork, IAsyncDisposable
+{
+    private ITransaction? transaction;
+
+    public Task BeginAsync(CancellationToken cancellationToken = default)
+    {
+        transaction ??= session.BeginTransaction();
+        return Task.CompletedTask;
+    }
+
+    public async Task CommitAsync(CancellationToken cancellationToken = default)
+    {
+        if (transaction is null) return;
+        await session.FlushAsync(cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
+        transaction.Dispose();
+        transaction = null;
+    }
+
+    public async Task RollbackAsync(CancellationToken cancellationToken = default)
+    {
+        if (transaction is null) return;
+        await transaction.RollbackAsync(cancellationToken);
+        transaction.Dispose();
+        transaction = null;
+    }
+
+    public ValueTask DisposeAsync()
+    {
+        transaction?.Dispose();
+        session.Dispose();
+        return ValueTask.CompletedTask;
+    }
+}

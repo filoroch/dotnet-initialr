@@ -1,0 +1,11 @@
+using {{RootNamespace}}.CrossCutting.Persistence.Repositories.Interfaces;
+using {{RootNamespace}}.Domain.{{Context}}.Entities;
+using {{RootNamespace}}.Domain.{{Context}}.Filters;
+using {{RootNamespace}}.Domain.{{Context}}.Queries;
+
+namespace {{RootNamespace}}.Domain.{{Context}}.Repositories;
+
+public interface I{{Entity}}Repository : IRepository<{{Entity}}, Guid>, IQueryRepository<Listar{{Context}}Query, {{Entity}}Query>
+{
+    Listar{{Context}}Query Filtrar(Listar{{Context}}Filter filter);
+}

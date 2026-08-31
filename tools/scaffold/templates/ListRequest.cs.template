@@ -1,0 +1,9 @@
+using {{RootNamespace}}.CrossCutting.Persistence.Pagination;
+
+namespace {{RootNamespace}}.Application.{{Context}}.DataTransfer.Requests;
+
+public sealed class Listar{{Context}}Request : PaginationRequest
+{
+    public string? Nome { get; set; }
+    public bool? Ativo { get; set; }
+}

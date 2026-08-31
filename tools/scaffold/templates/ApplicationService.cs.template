@@ -1,0 +1,14 @@
+using {{RootNamespace}}.Application.{{Context}}.DataTransfer.Requests;
+using {{RootNamespace}}.Application.{{Context}}.DataTransfer.Responses;
+using {{RootNamespace}}.CrossCutting.Persistence.Pagination;
+
+namespace {{RootNamespace}}.Application.{{Context}}.Services;
+
+public sealed class {{Entity}}AppService : I{{Entity}}AppService
+{
+    public Task<{{Entity}}Response> CriarAsync(Criar{{Entity}}Request request, CancellationToken cancellationToken = default)
+        => throw new NotImplementedException();
+
+    public Task<PaginatedResult<{{Entity}}QueryResponse>> ListarAsync(Listar{{Context}}Request request, CancellationToken cancellationToken = default)
+        => throw new NotImplementedException();
+}

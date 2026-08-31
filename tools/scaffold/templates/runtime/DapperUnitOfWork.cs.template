@@ -1,0 +1,36 @@
+using System.Data.Common;
+using {{RootNamespace}}.CrossCutting.Persistence.UnitOfWork.Interfaces;
+
+namespace {{RootNamespace}}.Infra.Persistence;
+
+public sealed class DapperUnitOfWork(DapperConnection holder) : IDapperUnitOfWork, IAsyncDisposable
+{
+    private readonly DbConnection connection = holder.Connection;
+    private DbTransaction? transaction;
+
+    public async Task BeginAsync(CancellationToken cancellationToken = default)
+    {
+        if (transaction is not null) return;
+        if (connection.State != System.Data.ConnectionState.Open)
+            await connection.OpenAsync(cancellationToken);
+        transaction = await connection.BeginTransactionAsync(cancellationToken);
+    }
+
+    public async Task CommitAsync(CancellationToken cancellationToken = default)
+    {
+        if (transaction is null) return;
+        await transaction.CommitAsync(cancellationToken);
+        await transaction.DisposeAsync();
+        transaction = null;
+    }
+
+    public async Task RollbackAsync(CancellationToken cancellationToken = default)
+    {
+        if (transaction is null) return;
+        await transaction.RollbackAsync(cancellationToken);
+        await transaction.DisposeAsync();
+        transaction = null;
+    }
+
+    public ValueTask DisposeAsync() => connection.DisposeAsync();
+}

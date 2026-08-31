@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Filoroch.Template.CrossCutting.Persistence.UnitOfWork.Implementations;
 
-public sealed class EFCoreUnitOfWork(DbContext context) : IUnitOfWork, IAsyncDisposable
+public sealed class EFCoreUnitOfWork(DbContext context) : IEFCoreUnitOfWork, IAsyncDisposable
 {
     private readonly DbContext _context = context;
     private IDbContextTransaction? _transaction;

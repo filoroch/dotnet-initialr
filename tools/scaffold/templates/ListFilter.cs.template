@@ -1,0 +1,7 @@
+namespace {{RootNamespace}}.Domain.{{Context}}.Filters;
+
+public sealed class Listar{{Context}}Filter
+{
+    public string? Nome { get; set; }
+    public bool? Ativo { get; set; }
+}

@@ -5,10 +5,11 @@ using Filoroch.Template.Domain.Usuarios.Queries;
 
 namespace Filoroch.Template.Domain.Usuarios.Repositories;
 
-public interface IUsuarioRepository : IRepository<Usuario, Guid>
+public interface IUsuarioRepository : IRepository<Usuario, Guid>, IQueryRepository<ListarUsuariosQuery, UsuarioQuery>
 {
     Task<bool> ExistePorEmailAsync(string email, CancellationToken cancellationToken = default);
+    Task<Usuario?> BuscarPorEmailParaAutenticacaoAsync(string email, CancellationToken cancellationToken = default);
 
-    IQueryable<UsuarioQuery> Filtrar(ListarUsuariosFilter filter);
+    ListarUsuariosQuery Filtrar(ListarUsuariosFilter filter);
 
 }

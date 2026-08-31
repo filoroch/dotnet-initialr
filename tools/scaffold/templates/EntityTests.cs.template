@@ -1,0 +1,19 @@
+using FluentAssertions;
+using {{RootNamespace}}.Domain.{{Context}}.Entities;
+using Xunit;
+
+namespace {{RootNamespace}}.Domain.Tests.{{Context}}.Entities;
+
+public class {{Entity}}Tests
+{
+    public class Construtor
+    {
+        [Fact]
+        public void Dado_DadosValidos_Espero_EntidadeCriada()
+        {
+            var sut = new {{Entity}}();
+
+            sut.Id.Should().NotBeEmpty();
+        }
+    }
+}

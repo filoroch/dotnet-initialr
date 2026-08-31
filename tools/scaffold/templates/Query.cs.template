@@ -1,0 +1,6 @@
+namespace {{RootNamespace}}.Domain.{{Context}}.Queries;
+
+public sealed class {{Entity}}Query
+{
+    public Guid Id { get; init; }
+}

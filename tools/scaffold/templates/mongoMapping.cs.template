@@ -1,0 +1,13 @@
+using MongoDB.Bson.Serialization;
+using {{RootNamespace}}.Domain.{{Context}}.Entities;
+
+namespace {{RootNamespace}}.Infra.{{Context}}.Mappings;
+
+public static class {{Entity}}MongoMapping
+{
+    public static void Register()
+    {
+        if (!BsonClassMap.IsClassMapRegistered(typeof({{Entity}})))
+            BsonClassMap.RegisterClassMap<{{Entity}}>(map => map.AutoMap());
+    }
+}

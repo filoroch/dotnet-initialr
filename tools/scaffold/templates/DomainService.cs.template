@@ -1,0 +1,6 @@
+namespace {{RootNamespace}}.Domain.{{Context}}.Services;
+
+public sealed class {{Context}}Service : I{{Context}}Service
+{
+    // TODO: injetar repositórios e implementar as regras de negócio.
+}

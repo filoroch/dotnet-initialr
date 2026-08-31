@@ -1,0 +1,5 @@
+namespace {{RootNamespace}}.Domain.{{Context}}.Repositories;
+
+public interface I{{Entity}}DapperRepository : I{{Entity}}Repository
+{
+}

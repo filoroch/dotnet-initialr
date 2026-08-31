@@ -11,7 +11,7 @@ public static class NativeInjectorBootstrapper
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        return services
+        IServiceCollection configuredServices = services
             .AddDomainDependencies()
             .AddApplicationDependencies()
             .AddInfrastructureDependencies(configuration)
@@ -24,5 +24,19 @@ public static class NativeInjectorBootstrapper
             })
             .AddExceptionHandler<GlobalExceptionHandler>()
             .AddProjectOpenTelemetry(configuration);
+
+        return configuredServices;
+    }
+
+    public static IServiceCollection AddProjectApiDependencies(
+        this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        services.AddProjectDependencies(configuration)
+            .AddProjectAuthentication(configuration)
+            .AddProjectCors(configuration)
+            .AddHealthChecks();
+
+        return services;
     }
 }

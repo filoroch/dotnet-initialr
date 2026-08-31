@@ -1,0 +1,25 @@
+using {{RootNamespace}}.CrossCutting.Persistence.Pagination;
+using {{RootNamespace}}.Domain.{{Context}}.Entities;
+using {{RootNamespace}}.Domain.{{Context}}.Filters;
+using {{RootNamespace}}.Domain.{{Context}}.Queries;
+using {{RootNamespace}}.Domain.{{Context}}.Repositories;
+using MongoDB.Driver;
+
+namespace {{RootNamespace}}.Infra.{{Context}}.Repositories;
+
+public sealed class {{Entity}}MongoRepository(IMongoCollection<{{Entity}}> collection) : I{{Entity}}MongoRepository
+{
+    public Listar{{Context}}Query Filtrar(Listar{{Context}}Filter filter) => new() { Nome = filter.Nome, Ativo = filter.Ativo };
+    public async Task<PaginatedResult<{{Entity}}Query>> ListarAsync(Listar{{Context}}Query query, int? quantity, int? page, string? orderBy, OrderType? orderType, CancellationToken cancellationToken = default)
+    {
+        int take = quantity is > 0 and <= 100 ? quantity.Value : 20;
+        int skip = ((page is > 0 ? page.Value : 1) - 1) * take;
+        long total = await collection.CountDocumentsAsync(FilterDefinition<{{Entity}}>.Empty, cancellationToken: cancellationToken);
+        var items = await collection.Find(FilterDefinition<{{Entity}}>.Empty).SortBy(entity => entity.Id).Skip(skip).Limit(take).Project(entity => new {{Entity}}Query { Id = entity.Id }).ToListAsync(cancellationToken);
+        return new PaginatedResult<{{Entity}}Query>(items, checked((int)total));
+    }
+    public async Task<{{Entity}}?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default) => await collection.Find(entity => entity.Id == id).FirstOrDefaultAsync(cancellationToken);
+    public Task AddAsync({{Entity}} entity, CancellationToken cancellationToken = default) => collection.InsertOneAsync(entity, cancellationToken: cancellationToken);
+    public Task UpdateAsync({{Entity}} entity, CancellationToken cancellationToken = default) => collection.ReplaceOneAsync(x => x.Id == entity.Id, entity, cancellationToken: cancellationToken).ContinueWith(_ => { }, cancellationToken);
+    public void Remove({{Entity}} entity) => collection.DeleteOne(x => x.Id == entity.Id);
+}

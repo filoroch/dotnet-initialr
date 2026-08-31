@@ -1,0 +1,29 @@
+using {{RootNamespace}}.Application.{{Context}}.DataTransfer.Requests;
+using {{RootNamespace}}.Application.{{Context}}.DataTransfer.Responses;
+using {{RootNamespace}}.Application.{{Context}}.Services;
+using {{RootNamespace}}.CrossCutting.Persistence.Pagination;
+using Microsoft.AspNetCore.Mvc;
+
+namespace {{RootNamespace}}.Api.Controllers.{{Context}};
+
+[ApiController]
+[Route("api/{{context}}")]
+public sealed class {{Context}}Controller(I{{Entity}}AppService _appService) : ControllerBase
+{
+    [HttpGet]
+    [ProducesResponseType(typeof(PaginatedResult<{{Entity}}QueryResponse>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<PaginatedResult<{{Entity}}QueryResponse>>> ListarAsync(
+        [FromQuery] Listar{{Context}}Request request,
+        CancellationToken cancellationToken)
+        => Ok(await _appService.ListarAsync(request, cancellationToken));
+
+    [HttpPost]
+    [ProducesResponseType(typeof({{Entity}}Response), StatusCodes.Status201Created)]
+    public async Task<ActionResult<{{Entity}}Response>> CriarAsync(
+        [FromBody] Criar{{Entity}}Request request,
+        CancellationToken cancellationToken)
+    {
+        {{Entity}}Response response = await _appService.CriarAsync(request, cancellationToken);
+        return StatusCode(StatusCodes.Status201Created, response);
+    }
+}

@@ -1,0 +1,13 @@
+using FluentNHibernate.Mapping;
+using {{RootNamespace}}.Domain.{{Context}}.Entities;
+
+namespace {{RootNamespace}}.Infra.{{Context}}.Mappings;
+
+public sealed class {{Entity}}NHibernateMapping : ClassMap<{{Entity}}>
+{
+    public {{Entity}}NHibernateMapping()
+    {
+        Table("{{Context}}");
+        Id(x => x.Id).GeneratedBy.GuidComb();
+    }
+}

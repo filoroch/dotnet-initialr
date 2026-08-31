@@ -1,0 +1,11 @@
+namespace {{RootNamespace}}.Domain.{{Context}}.Entities;
+
+public sealed class {{Entity}}
+{
+    public Guid Id { get; private set; }
+
+    public {{Entity}}()
+    {
+        Id = Guid.NewGuid();
+    }
+}

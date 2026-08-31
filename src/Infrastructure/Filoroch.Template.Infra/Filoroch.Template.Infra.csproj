@@ -1,16 +1,36 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
     <ProjectReference Include="..\..\Domain\Filoroch.Template.Domain\Filoroch.Template.Domain.csproj" />
     <ProjectReference Include="..\..\CrossCutting\Filoroch.Template.CrossCutting\Filoroch.Template.CrossCutting.csproj" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <TemplateSelectedProviders>efcore|nhibernate|dapper|mongo</TemplateSelectedProviders>
+    <TemplateSelectedDrivers>sqlite|sqlserver|postgresql|mongodb</TemplateSelectedDrivers>
+    <TemplateSelectedProvidersOverride>__TEMPLATE_SELECTED_PROVIDERS__|nhibernate</TemplateSelectedProvidersOverride>
+    <TemplateSelectedDriversOverride>__TEMPLATE_SELECTED_DRIVERS__|postgresql</TemplateSelectedDriversOverride>
+    <TemplateSelectedProviders Condition="$([System.String]::Copy('$(TemplateSelectedProvidersOverride)').Contains('TEMPLATE')) == 'False'">$(TemplateSelectedProvidersOverride)</TemplateSelectedProviders>
+    <TemplateSelectedDrivers Condition="$([System.String]::Copy('$(TemplateSelectedDriversOverride)').Contains('TEMPLATE')) == 'False'">$(TemplateSelectedDriversOverride)</TemplateSelectedDrivers>
+  </PropertyGroup>
+
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.11">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.11" Condition="$([System.String]::Copy('$(TemplateSelectedProviders)').Contains('efcore'))">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.11" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.11" Condition="$([System.String]::Copy('$(TemplateSelectedProviders)').Contains('efcore')) and $([System.String]::Copy('$(TemplateSelectedDrivers)').Contains('sqlite'))" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.11" Condition="$([System.String]::Copy('$(TemplateSelectedProviders)').Contains('efcore')) and $([System.String]::Copy('$(TemplateSelectedDrivers)').Contains('sqlserver'))" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0" Condition="$([System.String]::Copy('$(TemplateSelectedProviders)').Contains('efcore')) and $([System.String]::Copy('$(TemplateSelectedDrivers)').Contains('postgresql'))" />
+    <PackageReference Include="NHibernate" Version="5.5.2" Condition="$([System.String]::Copy('$(TemplateSelectedProviders)').Contains('nhibernate'))" />
+    <PackageReference Include="FluentNHibernate" Version="3.4.0" Condition="$([System.String]::Copy('$(TemplateSelectedProviders)').Contains('nhibernate'))" />
+    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.119" Condition="$([System.String]::Copy('$(TemplateSelectedProviders)').Contains('nhibernate')) and $([System.String]::Copy('$(TemplateSelectedDrivers)').Contains('sqlite'))" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.6" Condition="($([System.String]::Copy('$(TemplateSelectedProviders)').Contains('nhibernate')) or $([System.String]::Copy('$(TemplateSelectedProviders)').Contains('dapper'))) and $([System.String]::Copy('$(TemplateSelectedDrivers)').Contains('sqlserver'))" />
+    <PackageReference Include="Npgsql" Version="10.0.0" Condition="($([System.String]::Copy('$(TemplateSelectedProviders)').Contains('nhibernate')) or $([System.String]::Copy('$(TemplateSelectedProviders)').Contains('dapper'))) and $([System.String]::Copy('$(TemplateSelectedDrivers)').Contains('postgresql'))" />
+    <PackageReference Include="Dapper" Version="2.1.66" Condition="$([System.String]::Copy('$(TemplateSelectedProviders)').Contains('dapper'))" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.11" Condition="$([System.String]::Copy('$(TemplateSelectedProviders)').Contains('dapper')) and $([System.String]::Copy('$(TemplateSelectedDrivers)').Contains('sqlite'))" />
+    <PackageReference Include="MongoDB.Driver" Version="3.4.0" Condition="$([System.String]::Copy('$(TemplateSelectedProviders)').Contains('mongo')) and $([System.String]::Copy('$(TemplateSelectedDrivers)').Contains('mongodb'))" />
   </ItemGroup>
 
   <PropertyGroup>

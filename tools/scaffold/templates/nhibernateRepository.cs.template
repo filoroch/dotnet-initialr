@@ -1,0 +1,29 @@
+using {{RootNamespace}}.CrossCutting.Persistence.Pagination;
+using {{RootNamespace}}.Domain.{{Context}}.Entities;
+using {{RootNamespace}}.Domain.{{Context}}.Filters;
+using {{RootNamespace}}.Domain.{{Context}}.Queries;
+using {{RootNamespace}}.Domain.{{Context}}.Repositories;
+using NHibernate;
+using NHibernate.Linq;
+
+namespace {{RootNamespace}}.Infra.{{Context}}.Repositories;
+
+public sealed class {{Entity}}NHibernateRepository(ISession session) : I{{Entity}}NHibernateRepository
+{
+    public Listar{{Context}}Query Filtrar(Listar{{Context}}Filter filter)
+        => new() { Nome = filter.Nome, Ativo = filter.Ativo };
+
+    public async Task<PaginatedResult<{{Entity}}Query>> ListarAsync(Listar{{Context}}Query query, int? quantity, int? page, string? orderBy, OrderType? orderType, CancellationToken cancellationToken = default)
+    {
+        int take = quantity is > 0 and <= 100 ? quantity.Value : 20;
+        int skip = ((page is > 0 ? page.Value : 1) - 1) * take;
+        IQueryable<{{Entity}}> source = session.Query<{{Entity}}>();
+        int total = await source.CountAsync(cancellationToken);
+        var items = await source.OrderBy(entity => entity.Id).Skip(skip).Take(take).Select(entity => new {{Entity}}Query { Id = entity.Id }).ToListAsync(cancellationToken);
+        return new PaginatedResult<{{Entity}}Query>(items, total);
+    }
+    public async Task<{{Entity}}?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default) => await session.GetAsync<{{Entity}}>(id, cancellationToken);
+    public async Task AddAsync({{Entity}} entity, CancellationToken cancellationToken = default) => await session.SaveAsync(entity, cancellationToken);
+    public async Task UpdateAsync({{Entity}} entity, CancellationToken cancellationToken = default) => await session.UpdateAsync(entity, cancellationToken);
+    public void Remove({{Entity}} entity) => session.Delete(entity);
+}
