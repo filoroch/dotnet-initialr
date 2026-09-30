@@ -2,6 +2,7 @@ using Filoroch.Template.IoC.Settings;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OpenTelemetry.Exporter;
+using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -29,6 +30,9 @@ public static class OpenTelemetryConfiguration
         string metricsEndpoint = Environment.GetEnvironmentVariable("OTEL_EXPORTER_OTLP_METRICS_ENDPOINT")
             ?? endpoint;
 
+        string logsEndpoint = Environment.GetEnvironmentVariable("OTEL_EXPORTER_OTLP_LOGS_ENDPOINT")
+            ?? endpoint;
+
         string protocol = Environment.GetEnvironmentVariable("OTEL_EXPORTER_OTLP_PROTOCOL")
             ?? "grpc";
 
@@ -50,7 +54,9 @@ public static class OpenTelemetryConfiguration
                 .AddAspNetCoreInstrumentation()
                 .AddHttpClientInstrumentation()
                 .AddRuntimeInstrumentation()
-                .AddOtlpExporter(options => ConfigureExporter(options, metricsEndpoint, protocol, headers, "metrics")));
+                .AddOtlpExporter(options => ConfigureExporter(options, metricsEndpoint, protocol, headers, "metrics")))
+            .WithLogging(logging => logging
+                .AddOtlpExporter(options => ConfigureExporter(options, logsEndpoint, protocol, headers, "logs")));
 
         return services;
     }

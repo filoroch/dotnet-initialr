@@ -1,0 +1,5 @@
+server:
+  http:
+    addr: ":4317"
+  grpc:
+    addr: ":4318"

@@ -86,6 +86,10 @@
       "source": "./",
       "modifiers": [
         {
+          "exclude": [
+            "tools/observability/**"
+          ]
+        },        {
           "condition": "!(provider == \"efcore\")",
           "exclude": [
             "src/IoC/**/Configurations/Persistence/EfCorePersistenceModule.cs",

@@ -15,7 +15,6 @@ public static class NativeInjectorBootstrapper
             .AddDomainDependencies()
             .AddApplicationDependencies()
             .AddInfrastructureDependencies(configuration)
-            .AddProjectSwagger(configuration)
             .AddProblemDetails(options =>
             {
                 options.CustomizeProblemDetails = context =>
@@ -33,6 +32,8 @@ public static class NativeInjectorBootstrapper
         IConfiguration configuration)
     {
         services.AddProjectDependencies(configuration)
+            .AddApiApplicationDependencies()
+            .AddProjectSwagger(configuration)
             .AddProjectAuthentication(configuration)
             .AddProjectCors(configuration)
             .AddHealthChecks();

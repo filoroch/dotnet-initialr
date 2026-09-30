@@ -141,4 +141,52 @@ public class UsuarioServiceTests
                 Arg.Any<string>(), Arg.Any<CancellationToken>());
         }
     }
+
+    public class DesativarAsync : UsuarioServiceTests
+    {
+        [Fact]
+        public async Task Dado_UsuarioAtivo_Espero_DesativarEAtualizarRepositorio()
+        {
+            Usuario usuario = new("Nome", "email@email.com", "hash");
+            usuarioRepository.GetByIdAsync(usuario.Id, Arg.Any<CancellationToken>())
+                .Returns(usuario);
+
+            await sut.DesativarAsync(usuario.Id);
+
+            usuario.Ativo.Should().BeFalse();
+            await usuarioRepository.Received(1).UpdateAsync(
+                Arg.Is<Usuario>(item => item.Id == usuario.Id && !item.Ativo),
+                Arg.Any<CancellationToken>());
+        }
+
+        [Fact]
+        public async Task Dado_UsuarioJaInativo_Espero_NaoAtualizarRepositorio()
+        {
+            Usuario usuario = new("Nome", "email@email.com", "hash");
+            usuario.Desativar();
+            usuarioRepository.GetByIdAsync(usuario.Id, Arg.Any<CancellationToken>())
+                .Returns(usuario);
+
+            await sut.DesativarAsync(usuario.Id);
+
+            await usuarioRepository.DidNotReceive().UpdateAsync(
+                Arg.Any<Usuario>(), Arg.Any<CancellationToken>());
+        }
+
+        [Fact]
+        public async Task Dado_UsuarioNaoEncontrado_Espero_LancarExcecao()
+        {
+            Guid id = Guid.NewGuid();
+            usuarioRepository.GetByIdAsync(id, Arg.Any<CancellationToken>())
+                .Returns((Usuario?)null);
+
+            Func<Task> action = () => sut.DesativarAsync(id);
+
+            await action.Should().ThrowAsync<RegistroNaoEncontradoException>()
+                .WithMessage("Registro Usuário não encontrado");
+
+            await usuarioRepository.DidNotReceive().UpdateAsync(
+                Arg.Any<Usuario>(), Arg.Any<CancellationToken>());
+        }
+    }
 }

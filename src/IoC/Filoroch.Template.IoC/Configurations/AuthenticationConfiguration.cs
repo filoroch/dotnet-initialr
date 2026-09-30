@@ -6,7 +6,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Filoroch.Template.IoC.Services;
-using Filoroch.Template.Domain.Usuarios.Services;
 
 namespace Filoroch.Template.IoC.Configurations;
 
@@ -32,7 +31,6 @@ public static class AuthenticationConfiguration
             throw new InvalidOperationException("Jwt:ClockSkewSeconds não pode ser negativo.");
 
         services.AddSingleton(settings);
-        services.AddScoped<IPasswordService, BCryptPasswordService>();
         services.AddScoped<IJwtTokenService, JwtTokenService>();
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

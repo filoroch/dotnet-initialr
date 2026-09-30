@@ -27,9 +27,9 @@ FluentNHibernate; não são gerados mappings XML por padrão.
 Os arquivos `appsettings.json` e `appsettings.{Environment}.json` ficam em
 `src/IoC/Filoroch.Template.IoC/Settings`. Os entrypoints não mantêm cópias
 locais. Apps que utilizam configuração devem chamar, no início do bootstrap,
-`builder.Configuration.AddProjectAppSettings(builder.Environment)`. API e
-Workers já utilizam essa convenção; Jobs, Consumers e MCP ainda são
-placeholders mínimos.
+`builder.Configuration.AddProjectAppSettings(builder.Environment)`. API, Workers,
+Jobs e Consumers utilizam essa convenção; o MCP carrega os settings sem Serilog
+(stdout reservado ao protocolo).
 
 As classes tipadas de configuração, como `DatabaseSettings` e
 `OpenTelemetrySettings`, também pertencem à IoC e são registradas pelas
@@ -62,6 +62,18 @@ remover configurações existentes.
 ## Usuários
 
 O domínio possui `Entities`, `Commands`, `Filters`, `Queries`, `Repositories` e `Services`. A API converte requests em comandos/filtros e usa a `Application` para orquestração.
+
+## Entrypoints de exemplo
+
+Todos reutilizam o mesmo caso de uso (`IUsuarioAppService.DesativarInativosAsync`)
+sem conter regra de negócio — apenas bootstrap, `IServiceScopeFactory` e `Activity`:
+
+- `Api`: `POST/GET /api/usuarios` + login JWT.
+- `Workers`: `BackgroundService` com `PeriodicTimer` que desativa inativos.
+- `Jobs`: Quartz.NET com cron (`Jobs:Cron`) executando o mesmo job.
+- `Consumers`: `Channel<UsuarioCriadoEvent>` in-memory como exemplo didático
+  (troca futura por MassTransit/RabbitMQ sem tocar Domain/Application).
+- `Mcp`: tools `criar_usuario`/`listar_usuarios` via `stdio`.
 
 ## Transações
 

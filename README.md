@@ -4,7 +4,7 @@ Template de solution .NET baseado em DDD, organização por contexto e composiç
 
 ## Estado atual
 
-O primeiro incremento usa SQLite com EF Core e contém o contexto de `Usuarios`, API, observabilidade, tratamento global de exceções e testes de domínio.
+O primeiro incremento usa SQLite com EF Core e contém o contexto de `Usuarios`, API, Workers, Jobs, Consumers, observabilidade, tratamento global de exceções e testes de domínio.
 
 OpenTelemetry também instrumenta EF Core e SqlClient. As variáveis padrão
 `OTEL_*` podem ser usadas para enviar traces e métricas ao Grafana Cloud; não
@@ -132,7 +132,35 @@ O login exige que o usuário possua `SenhaHash` BCrypt e `Perfil` persistidos.
 A criação do usuário recebe uma senha obrigatória, que é transformada em hash
 antes da persistência. A alteração de senha segue o mesmo fluxo.
 
+## Workers / Jobs / Consumers
+
+Exemplos de cada tipo de entrypoint reutilizando o contexto de usuários
+(desativação de inativos via `IUsuarioAppService`), sem regra de negócio nos apps:
+
+```bash
+dotnet run --project src/Apps/Filoroch.Template.Workers
+dotnet run --project src/Apps/Filoroch.Template.Jobs
+dotnet run --project src/Apps/Filoroch.Template.Consumers
+```
+
+`Workers` usa `PeriodicTimer` (`Workers:IntervaloSegundos`,
+`Workers:DiasInatividade`); `Jobs` agenda o mesmo trabalho com Quartz
+(`Jobs:Cron`, `Jobs:DiasInatividade`); `Consumers` demonstra consumo via
+`Channel<UsuarioCriadoEvent>` in-memory.
+
+## Observabilidade local
+
+```bash
+docker compose -f tools/observability/docker-compose.yml up -d
+```
+
+Sobe `otel-collector -> loki + tempo + prometheus -> grafana` (`:3000`).
+Alternativa rápida: dashboard Aspire standalone
+(`--profile aspire up aspire-dashboard`, UI em `:8081`, OTLP em `:18889`).
+Detalhes em `tools/observability/README.md`. O harness é local-only e não é
+incluído na solution gerada pelo template.
+
 ## Próximos passos
 
-- Validar a visualização de spans SQL no Grafana Cloud.
+- Validar a visualização de spans SQL no Grafana local/Cloud.
 - Evoluir o scaffold para atualizar registros de DI e referências específicas.

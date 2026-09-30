@@ -41,6 +41,19 @@ public sealed class UsuariosService(IUsuarioRepository _repository, IPasswordSer
         await _repository.UpdateAsync(usuario, cancellationToken);
     }
 
+    public async Task DesativarAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        Usuario usuario = await _repository.GetByIdAsync(id, cancellationToken)
+            ?? throw new RegistroNaoEncontradoException("Usuário");
+
+        if (!usuario.Ativo)
+            return;
+
+        usuario.Desativar();
+        usuario.AtualizarDataModificacao();
+        await _repository.UpdateAsync(usuario, cancellationToken);
+    }
+
     private async Task ValidarEmailAsync(string email, CancellationToken cancellationToken = default)
     {
         if (await _repository.ExistePorEmailAsync(email, cancellationToken))

@@ -8,4 +8,6 @@ public interface IUsuarioAppService
 {
     Task<UsuarioResponse> CriarAsync(CriarUsuarioRequest request, CancellationToken cancellationToken = default);
     Task<PaginatedResult<UsuarioQueryResponse>> ListarAsync(ListarUsuariosRequest request, CancellationToken cancellationToken = default);
+    Task DesativarAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<int> DesativarInativosAsync(DesativarUsuariosInativosRequest request, CancellationToken cancellationToken = default);
 }

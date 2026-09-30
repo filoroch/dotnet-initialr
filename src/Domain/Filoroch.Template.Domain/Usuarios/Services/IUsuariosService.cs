@@ -7,4 +7,5 @@ public interface IUsuariosService
 {
     Task<Usuario> CriarAsync(CriarUsuarioCommand command, CancellationToken cancellationToken = default);
     Task AtualizarAsync(AtualizarUsuarioCommand command, CancellationToken cancellationToken = default);
+    Task DesativarAsync(Guid id, CancellationToken cancellationToken = default);
 }
