@@ -22,7 +22,7 @@ jobs:
           dotnet-version: '10.0.x'
 
       - name: Pack
-        run: dotnet pack --configuration Release --output ./packages
+        run: dotnet pack Template.csproj --configuration Release --output ./packages
         working-directory: ${{ github.workspace }}
 
       - name: NuGet Login
