@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>Filoroch.Template.Solution</PackageId>
+    <PackageVersion>1.0.0</PackageVersion>
+    <Title>Filoroch Dotnet Initialr</Title>
+    <Authors>Filipe Dhunior</Authors>
+    <Description>Template reutilizável para projetos .NET com Clean Architecture, DDD, OpenTelemetry e múltiplos providers de persistência (EF Core, NHibernate, Dapper, MongoDB) com drivers SQLite, SQL Server, PostgreSQL e MongoDB.</Description>
+    <PackageTags>dotnet;template;clean-architecture;ddd;opentelemetry;efcore;sqlite;postgresql;sqlserver;nhibernate;dapper;mongodb</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/filoroch/dotnet-initialr</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/filoroch/dotnet-initialr</PackageProjectUrl>
+    <PackageIcon>icon.png</PackageIcon>
+    <IncludeContentInPack>true</IncludeContentInPack>
+    <ContentTargetFolders>content</ContentTargetFolders>
+    <NoDefaultExcludes>true</NoDefaultExcludes>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="src\**" Exclude="src\**\bin\**;src\**\obj\**" />
+    <Content Include=".template.config\**" />
+    <Content Include="template-assets\**" />
+    <Content Include="tools\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+    <None Include="icon.png" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+</Project>
