@@ -15,7 +15,6 @@
     <PackageReference Include="OpenTelemetry.Instrumentation.EntityFrameworkCore" Version="1.18.0-beta.1" />
     <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.18.0" />
     <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" Version="1.18.0" />
-    <PackageReference Include="OpenTelemetry.Instrumentation.SqlClient" Version="1.18.0" />
     <PackageReference Include="Scrutor" Version="7.0.0" />
     <PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
     <PackageReference Include="Serilog.Settings.Configuration" Version="10.0.1" />
@@ -46,7 +45,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.11" Condition="$([System.String]::Copy('$(TemplateSelectedProviders)').Contains('efcore')) and $([System.String]::Copy('$(TemplateSelectedDrivers)').Contains('sqlite'))" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.11" Condition="$([System.String]::Copy('$(TemplateSelectedProviders)').Contains('efcore'))" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.11" Condition="$([System.String]::Copy('$(TemplateSelectedProviders)').Contains('efcore'))" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0" Condition="$([System.String]::Copy('$(TemplateSelectedProviders)').Contains('efcore'))" />
     <PackageReference Include="NHibernate" Version="5.5.2" Condition="$([System.String]::Copy('$(TemplateSelectedProviders)').Contains('nhibernate'))" />

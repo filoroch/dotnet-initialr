@@ -47,8 +47,15 @@ public static class OpenTelemetryConfiguration
             .WithTracing(tracing => tracing
                 .AddAspNetCoreInstrumentation()
                 .AddHttpClientInstrumentation()
-                .AddEntityFrameworkCoreInstrumentation()
-                .AddSqlClientInstrumentation()
+                .AddEntityFrameworkCoreInstrumentation(options =>
+                {
+                    options.EnrichWithIDbCommand = (activity, command) =>
+                    {
+                        activity.SetTag("db.system", "sqlite");
+                        activity.SetTag("db.name", "Filoroch.Template");
+                        activity.SetTag("db.statement", command.CommandText);
+                    };
+                })
                 .AddOtlpExporter(options => ConfigureExporter(options, tracesEndpoint, protocol, headers, "traces")))
             .WithMetrics(metrics => metrics
                 .AddAspNetCoreInstrumentation()

@@ -1,11 +1,16 @@
 {
   "$schema": "http://json.schemastore.org/template",
   "author": "filoroch",
-  "classifications": ["Solution", ".NET", "DDD", "Clean Architecture"],
+  "classifications": [
+    "Solution",
+    ".NET",
+    "DDD",
+    "Clean Architecture"
+  ],
   "identity": "Filoroch.Template.Solution",
   "name": "Filoroch Dotnet Intialr",
   "shortName": "filoroch-scaffold-solution",
-  "sourceName": "filoroch-dotnet-initialr",
+  "sourceName": "Filoroch.Template",
   "preferNameDirectory": true,
   "symbols": {
     "provider": {
@@ -13,12 +18,24 @@
       "datatype": "choice",
       "allowMultipleValues": true,
       "defaultValue": "efcore",
-      "description": "Provider de persistência inicial. Use efcore, nhibernate, dapper ou mongo.",
+      "description": "Provider de persist\u00eancia inicial. Use efcore, nhibernate, dapper ou mongo.",
       "choices": [
-        { "choice": "efcore", "description": "Entity Framework Core" },
-        { "choice": "nhibernate", "description": "NHibernate com FluentNHibernate" },
-        { "choice": "dapper", "description": "Dapper" },
-        { "choice": "mongo", "description": "MongoDB" }
+        {
+          "choice": "efcore",
+          "description": "Entity Framework Core"
+        },
+        {
+          "choice": "nhibernate",
+          "description": "NHibernate com FluentNHibernate"
+        },
+        {
+          "choice": "dapper",
+          "description": "Dapper"
+        },
+        {
+          "choice": "mongo",
+          "description": "MongoDB"
+        }
       ]
     },
     "driver": {
@@ -28,10 +45,22 @@
       "defaultValue": "sqlite",
       "description": "Driver/banco do provider inicial.",
       "choices": [
-        { "choice": "sqlite", "description": "SQLite" },
-        { "choice": "sqlserver", "description": "SQL Server" },
-        { "choice": "postgresql", "description": "PostgreSQL" },
-        { "choice": "mongodb", "description": "MongoDB" }
+        {
+          "choice": "sqlite",
+          "description": "SQLite"
+        },
+        {
+          "choice": "sqlserver",
+          "description": "SQL Server"
+        },
+        {
+          "choice": "postgresql",
+          "description": "PostgreSQL"
+        },
+        {
+          "choice": "mongodb",
+          "description": "MongoDB"
+        }
       ]
     },
     "defaultProvider": {
@@ -41,7 +70,10 @@
       "parameters": {
         "source": "provider",
         "steps": [
-          { "regex": "\\|.*$", "replacement": "" }
+          {
+            "regex": "\\|.*$",
+            "replacement": ""
+          }
         ]
       }
     },
@@ -52,7 +84,10 @@
       "parameters": {
         "source": "driver",
         "steps": [
-          { "regex": "\\|.*$", "replacement": "" }
+          {
+            "regex": "\\|.*$",
+            "replacement": ""
+          }
         ]
       }
     },
@@ -61,7 +96,12 @@
       "generator": "join",
       "replaces": "__TEMPLATE_SELECTED_PROVIDERS__",
       "parameters": {
-        "symbols": [{ "type": "ref", "value": "provider" }],
+        "symbols": [
+          {
+            "type": "ref",
+            "value": "provider"
+          }
+        ],
         "separator": "|",
         "removeEmptyValues": true
       }
@@ -71,7 +111,12 @@
       "generator": "join",
       "replaces": "__TEMPLATE_SELECTED_DRIVERS__",
       "parameters": {
-        "symbols": [{ "type": "ref", "value": "driver" }],
+        "symbols": [
+          {
+            "type": "ref",
+            "value": "driver"
+          }
+        ],
         "separator": "|",
         "removeEmptyValues": true
       }
@@ -87,9 +132,11 @@
       "modifiers": [
         {
           "exclude": [
-            "tools/observability/**"
+            "tools/observability/**",
+            "template-assets/**"
           ]
-        },        {
+        },
+        {
           "condition": "!(provider == \"efcore\")",
           "exclude": [
             "src/IoC/**/Configurations/Persistence/EfCorePersistenceModule.cs",
@@ -130,11 +177,6 @@
           ]
         }
       ]
-    },
-    {
-      "source": "template-assets/efcore",
-      "target": "./",
-      "condition": "provider == \"efcore\""
     },
     {
       "source": "template-assets/nhibernate",
