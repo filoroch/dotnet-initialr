@@ -6,9 +6,10 @@ Template de solution .NET baseado em DDD, organização por contexto e composiç
 
 O primeiro incremento usa SQLite com EF Core e contém o contexto de `Usuarios`, API, Workers, Jobs, Consumers, observabilidade, tratamento global de exceções e testes de domínio.
 
-OpenTelemetry também instrumenta EF Core e SqlClient. As variáveis padrão
-`OTEL_*` podem ser usadas para enviar traces e métricas ao Grafana Cloud; não
-coloque headers de autorização em arquivos versionados.
+OpenTelemetry instrumenta ASP.NET Core, HttpClient e EF Core, incluindo o
+texto dos comandos SQL (parâmetros não são enviados por padrão). As variáveis
+padrão `OTEL_*` podem ser usadas para enviar traces e métricas ao Grafana
+Cloud; não coloque headers de autorização em arquivos versionados.
 
 ## Executar
 
@@ -19,7 +20,7 @@ dotnet run --project src/Apps/Filoroch.Template.Api
 Exemplo:
 
 ```bash
-curl -X POST http://localhost:5000/api/usuarios \
+curl -X POST http://localhost:5196/api/usuarios \
   -H "Content-Type: application/json" \
   -d '{"username":"Filipe Rocha","email":"filipe@email.com","senha":"Senha123!"}'
 ```

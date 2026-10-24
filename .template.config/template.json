@@ -8,7 +8,7 @@
     "Clean Architecture"
   ],
   "identity": "Filoroch.Template.Solution",
-  "name": "Filoroch Dotnet Intialr",
+  "name": "Filoroch Dotnet Initialr",
   "shortName": "filoroch-scaffold-solution",
   "sourceName": "Filoroch.Template",
   "preferNameDirectory": true,
