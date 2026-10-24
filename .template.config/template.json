@@ -133,7 +133,8 @@
         {
           "exclude": [
             "tools/observability/**",
-            "template-assets/**"
+            "template-assets/**",
+            "src/Tests/**/MongoSerializationTests.cs"
           ]
         },
         {
@@ -145,6 +146,12 @@
             "src/Infrastructure/**/Usuarios/Repositories/UsuarioRepository.cs",
             "src/Infrastructure/**/Migrations/**",
             "src/Infrastructure/**/DbConnectionFactory.cs"
+          ]
+        },
+        {
+          "condition": "provider == \"nhibernate\"",
+          "exclude": [
+            "src/Domain/**/Entities/Usuario.cs"
           ]
         },
         {

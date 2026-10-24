@@ -33,10 +33,12 @@ ValidateNamespace(rootNamespace);
 string templateRoot = Path.Combine(root, "tools", "scaffold", "templates");
 ValidatePersistenceConfiguration(root);
 var selectedArtifacts = GetSelectedArtifacts(options);
+bool nhibernateEnabled = ReadEnabledProviders(root).Contains("nhibernate", StringComparer.OrdinalIgnoreCase);
 var tokens = new Dictionary<string, string>
 {
     ["{{RootNamespace}}"] = rootNamespace, ["{{Entity}}"] = entity,
-    ["{{entity}}"] = ToCamelCase(entity), ["{{Context}}"] = context, ["{{context}}"] = ToCamelCase(context)
+    ["{{entity}}"] = ToCamelCase(entity), ["{{Context}}"] = context, ["{{context}}"] = ToCamelCase(context),
+    ["{{EntityCtorAccess}}"] = nhibernateEnabled ? "protected" : "public"
 };
 
 var files = new Dictionary<string, (string Template, string Artifact)>
@@ -84,6 +86,14 @@ foreach ((string destination, (string template, string artifact)) in files)
     {
         content = content.Replace("Nome", "Username", StringComparison.Ordinal);
         content = AddUsuarioAuthenticationMembers(content, template);
+    }
+
+    if (nhibernateEnabled && template.Equals("EntityTests.cs.template", StringComparison.OrdinalIgnoreCase))
+    {
+        content = content.Replace(
+            $"var sut = new {{Entity}}();",
+            $"var sut = ({{Entity}})Activator.CreateInstance(typeof({{Entity}}), nonPublic: true)!;",
+            StringComparison.Ordinal);
     }
     Directory.CreateDirectory(Path.GetDirectoryName(destinationPath)!);
     File.WriteAllText(destinationPath, content);
