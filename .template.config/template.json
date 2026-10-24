@@ -144,7 +144,12 @@
             "src/Infrastructure/**/Persistence/TemplateDbContext.cs",
             "src/Infrastructure/**/Usuarios/Mappings/UsuarioEfMapping.cs",
             "src/Infrastructure/**/Usuarios/Repositories/UsuarioRepository.cs",
-            "src/Infrastructure/**/Migrations/**",
+            "src/Infrastructure/**/Migrations/**"
+          ]
+        },
+        {
+          "condition": "provider != \"efcore\" && provider != \"dapper\"",
+          "exclude": [
             "src/Infrastructure/**/DbConnectionFactory.cs"
           ]
         },
