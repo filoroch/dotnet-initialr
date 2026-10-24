@@ -14,7 +14,7 @@ A configuração fica centralizada na IoC, em `PersistenceSettings`:
       "EfCore": {
         "Enabled": true,
         "Driver": "sqlite",
-        "ConnectionString": "Data Source=app.db"
+        "ConnectionString": "Data Source=filoroch-template.db"
       },
       "NHibernate": {
         "Enabled": false,
