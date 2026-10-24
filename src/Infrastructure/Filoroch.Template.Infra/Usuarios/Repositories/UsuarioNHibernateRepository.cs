@@ -19,6 +19,8 @@ public sealed class UsuarioNHibernateRepository(ISession session) : IUsuarioNHib
     public void Remove(Usuario entity) => session.Delete(entity);
     public Task<bool> ExistePorEmailAsync(string email, CancellationToken cancellationToken = default)
         => session.Query<Usuario>().AnyAsync(x => x.Email == email.Trim().ToLower(), cancellationToken);
+    public Task<bool> ExisteAlgumAsync(CancellationToken cancellationToken = default)
+        => session.Query<Usuario>().AnyAsync(cancellationToken);
     public async Task<Usuario?> BuscarPorEmailParaAutenticacaoAsync(string email, CancellationToken cancellationToken = default)
         => await session.Query<Usuario>().SingleOrDefaultAsync(x => x.Email == email.Trim().ToLower(), cancellationToken);
     public ListarUsuariosQuery Filtrar(ListarUsuariosFilter filter) => new() { Username = filter.Username, Email = filter.Email, Ativo = filter.Ativo };

@@ -22,6 +22,7 @@ public sealed class UsuarioMongoRepository(IMongoCollection<Usuario> collection,
         else collection.DeleteOne(_session, x => x.Id == entity.Id);
     }
     public Task<bool> ExistePorEmailAsync(string email, CancellationToken cancellationToken = default) => (_session is null ? collection.Find(x => x.Email == email.Trim().ToLower()) : collection.Find(_session, x => x.Email == email.Trim().ToLower())).AnyAsync(cancellationToken);
+    public Task<bool> ExisteAlgumAsync(CancellationToken cancellationToken = default) => (_session is null ? collection.Find(Builders<Usuario>.Filter.Empty) : collection.Find(_session, Builders<Usuario>.Filter.Empty)).AnyAsync(cancellationToken);
     public async Task<Usuario?> BuscarPorEmailParaAutenticacaoAsync(string email, CancellationToken cancellationToken = default) => await (_session is null ? collection.Find(x => x.Email == email.Trim().ToLower()) : collection.Find(_session, x => x.Email == email.Trim().ToLower())).FirstOrDefaultAsync(cancellationToken);
     public ListarUsuariosQuery Filtrar(ListarUsuariosFilter filter) => new() { Username = filter.Username, Email = filter.Email, Ativo = filter.Ativo };
     public async Task<PaginatedResult<UsuarioQuery>> ListarAsync(ListarUsuariosQuery query, int? quantity, int? page, string? orderBy, OrderType? orderType, CancellationToken cancellationToken = default)

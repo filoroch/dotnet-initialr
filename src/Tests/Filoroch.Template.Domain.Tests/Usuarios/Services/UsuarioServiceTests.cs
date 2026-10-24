@@ -2,6 +2,7 @@ using FluentAssertions;
 using Filoroch.Template.CrossCutting.Exceptions;
 using Filoroch.Template.Domain.Usuarios.Commands;
 using Filoroch.Template.Domain.Usuarios.Entities;
+using Filoroch.Template.Domain.Usuarios.Enums;
 using Filoroch.Template.Domain.Usuarios.Repositories;
 using Filoroch.Template.Domain.Usuarios.Services;
 using NSubstitute;
@@ -56,6 +57,49 @@ public class UsuarioServiceTests
             await action.Should().ThrowAsync<OperacaoNaoPermitidaException>()
                 .WithMessage("Já existe um usuário com este e-mail.");
 
+            await usuarioRepository.DidNotReceive().AddAsync(
+                Arg.Any<Usuario>(), Arg.Any<CancellationToken>());
+        }
+    }
+
+    public class CriarAdministradorInicialAsync : UsuarioServiceTests
+    {
+        [Fact]
+        public async Task Dado_NenhumUsuarioExistente_Espero_CriarAdmin()
+        {
+            usuarioRepository.ExisteAlgumAsync(Arg.Any<CancellationToken>()).Returns(false);
+
+            bool criado = await sut.CriarAdministradorInicialAsync("admin", "admin@email.com", "Senha123!");
+
+            criado.Should().BeTrue();
+            await usuarioRepository.Received(1).AddAsync(
+                Arg.Is<Usuario>(usuario =>
+                    usuario.Email == "admin@email.com" &&
+                    usuario.Perfil == PerfilUsuario.Admin &&
+                    usuario.SenhaHash == "hash"),
+                Arg.Any<CancellationToken>());
+        }
+
+        [Fact]
+        public async Task Dado_UsuarioJaExistente_Espero_NaoCriarNada()
+        {
+            usuarioRepository.ExisteAlgumAsync(Arg.Any<CancellationToken>()).Returns(true);
+
+            bool criado = await sut.CriarAdministradorInicialAsync("admin", "admin@email.com", "Senha123!");
+
+            criado.Should().BeFalse();
+            await usuarioRepository.DidNotReceive().AddAsync(
+                Arg.Any<Usuario>(), Arg.Any<CancellationToken>());
+        }
+
+        [Fact]
+        public async Task Dado_SenhaVazia_Espero_LancarExcecaoENaoAdicionar()
+        {
+            usuarioRepository.ExisteAlgumAsync(Arg.Any<CancellationToken>()).Returns(false);
+
+            Func<Task<bool>> action = () => sut.CriarAdministradorInicialAsync("admin", "admin@email.com", " ");
+
+            await action.Should().ThrowAsync<PropriedadeObrigatoriaException>();
             await usuarioRepository.DidNotReceive().AddAsync(
                 Arg.Any<Usuario>(), Arg.Any<CancellationToken>());
         }

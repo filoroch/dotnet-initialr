@@ -2,6 +2,7 @@ using Filoroch.Template.CrossCutting.Exceptions;
 using Filoroch.Template.CrossCutting.Extensions;
 using Filoroch.Template.Domain.Usuarios.Commands;
 using Filoroch.Template.Domain.Usuarios.Entities;
+using Filoroch.Template.Domain.Usuarios.Enums;
 using Filoroch.Template.Domain.Usuarios.Repositories;
 
 namespace Filoroch.Template.Domain.Usuarios.Services;
@@ -19,6 +20,17 @@ public sealed class UsuariosService(IUsuarioRepository _repository, IPasswordSer
         usuario.AtualizarDataModificacao();
         await _repository.AddAsync(usuario, cancellationToken);
         return usuario;
+    }
+
+    public async Task<bool> CriarAdministradorInicialAsync(string username, string email, string senha, CancellationToken cancellationToken = default)
+    {
+        if (await _repository.ExisteAlgumAsync(cancellationToken))
+            return false;
+
+        string senhaValida = senha.ValidarObrigatoria(nameof(senha));
+        Usuario admin = new(username, email, _passwordService.Hash(senhaValida), PerfilUsuario.Admin);
+        await _repository.AddAsync(admin, cancellationToken);
+        return true;
     }
 
     public async Task AtualizarAsync(AtualizarUsuarioCommand command, CancellationToken cancellationToken = default)
