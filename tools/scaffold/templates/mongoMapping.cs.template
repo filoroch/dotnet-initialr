@@ -1,3 +1,4 @@
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using {{RootNamespace}}.Domain.{{Context}}.Entities;
 
@@ -5,9 +6,18 @@ namespace {{RootNamespace}}.Infra.{{Context}}.Mappings;
 
 public static class {{Entity}}MongoMapping
 {
+    private static readonly GuidSerializer GuidString = new(BsonType.String);
+
     public static void Register()
     {
-        if (!BsonClassMap.IsClassMapRegistered(typeof({{Entity}})))
-            BsonClassMap.RegisterClassMap<{{Entity}}>(map => map.AutoMap());
+        if (BsonClassMap.IsClassMapRegistered(typeof({{Entity}})))
+            return;
+
+        BsonClassMap.RegisterClassMap<{{Entity}}>(map =>
+        {
+            map.AutoMap();
+            map.SetIgnoreExtraElements(true);
+            map.MapIdMember(x => x.Id).SetSerializer(GuidString);
+        });
     }
 }
