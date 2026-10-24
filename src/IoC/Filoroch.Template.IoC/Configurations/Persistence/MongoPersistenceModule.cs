@@ -5,6 +5,7 @@ using Filoroch.Template.CrossCutting.Persistence.UnitOfWork.Interfaces;
 using Filoroch.Template.Domain.Usuarios.Entities;
 using Filoroch.Template.Domain.Usuarios.Repositories;
 using Filoroch.Template.Infra.Persistence;
+using Filoroch.Template.Infra.Usuarios.Mappings;
 using Filoroch.Template.Infra.Usuarios.Repositories;
 using Filoroch.Template.IoC.Settings;
 
@@ -14,6 +15,8 @@ public static partial class PersistenceModules
 {
     static partial void AddMongo(IServiceCollection services, IConfiguration configuration, PersistenceSettings settings)
     {
+        UsuarioMongoMapping.Register();  // Register Mongo mappings (Guid as string, etc.)
+
         services.AddSingleton<IMongoClient>(_ => new MongoClient(settings.Providers.Mongo.ConnectionString));
         services.AddScoped(provider => provider.GetRequiredService<IMongoClient>().StartSession());
         services.AddScoped(provider => provider.GetRequiredService<IMongoClient>().GetDatabase(settings.Providers.Mongo.Database).GetCollection<Usuario>("Usuarios"));

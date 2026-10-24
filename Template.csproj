@@ -24,12 +24,19 @@
     <Content Include="src\**" Exclude="src\**\bin\**;src\**\obj\**" />
     <Content Include=".template.config\**" />
     <Content Include="template-assets\**" />
-    <Content Include="tools\**" />
+    <Content Include="tools\scaffold\**" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="\" />
     <None Include="icon.png" Pack="true" PackagePath="\" />
   </ItemGroup>
+
+  <PropertyGroup>
+    <TemplateSelectedProviders>efcore|nhibernate|dapper|mongo</TemplateSelectedProviders>
+    <TemplateSelectedDrivers>sqlite|sqlserver|postgresql|mongodb</TemplateSelectedDrivers>
+    <TemplateSelectedProvidersOverride>efcore|nhibernate|dapper|mongo</TemplateSelectedProvidersOverride>
+    <TemplateSelectedDriversOverride>sqlite|sqlserver|postgresql|mongodb</TemplateSelectedDriversOverride>
+  </PropertyGroup>
 
 </Project>

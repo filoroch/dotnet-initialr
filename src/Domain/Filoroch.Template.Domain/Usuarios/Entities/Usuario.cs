@@ -15,7 +15,7 @@ public sealed class Usuario
     public DateTime CriadoEm { get; private set; }
     public DateTime AtualizadoEm { get; private set; }
 
-    protected Usuario() { }
+    public Usuario() { }
     
     public Usuario(string username, string email, string senhaHash, PerfilUsuario perfil = PerfilUsuario.User)
     {

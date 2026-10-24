@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Domain\Filoroch.Template.Domain\Filoroch.Template.Domain.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\Filoroch.Template.Infra\Filoroch.Template.Infra.csproj" />
     <ProjectReference Include="..\..\CrossCutting\Filoroch.Template.CrossCutting\Filoroch.Template.CrossCutting.csproj" />
   </ItemGroup>
 

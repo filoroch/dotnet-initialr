@@ -16,6 +16,9 @@ public sealed class UsuarioRepository(TemplateDbContext dbContext) : EFCoreRepos
     public Task<bool> ExistePorEmailAsync(string email, CancellationToken cancellationToken = default)
         => _dbContext.Usuarios.AnyAsync(x => x.Email == email.Trim().ToLower(), cancellationToken);
 
+    public Task<bool> ExisteAlgumAsync(CancellationToken cancellationToken = default)
+        => _dbContext.Usuarios.AnyAsync(cancellationToken);
+
     public Task<Usuario?> BuscarPorEmailParaAutenticacaoAsync(string email, CancellationToken cancellationToken = default)
         => _dbContext.Usuarios.SingleOrDefaultAsync(x => x.Email == email.Trim().ToLower(), cancellationToken);
 

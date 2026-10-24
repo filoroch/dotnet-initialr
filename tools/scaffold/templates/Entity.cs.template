@@ -4,7 +4,7 @@ public sealed class {{Entity}}
 {
     public Guid Id { get; private set; }
 
-    public {{Entity}}()
+    {{EntityCtorAccess}} {{Entity}}()
     {
         Id = Guid.NewGuid();
     }

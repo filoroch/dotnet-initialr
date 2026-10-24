@@ -133,7 +133,8 @@
         {
           "exclude": [
             "tools/observability/**",
-            "template-assets/**"
+            "template-assets/**",
+            "src/Tests/**/MongoSerializationTests.cs"
           ]
         },
         {
@@ -142,7 +143,20 @@
             "src/IoC/**/Configurations/Persistence/EfCorePersistenceModule.cs",
             "src/Infrastructure/**/Persistence/TemplateDbContext.cs",
             "src/Infrastructure/**/Usuarios/Mappings/UsuarioEfMapping.cs",
-            "src/Infrastructure/**/Usuarios/Repositories/UsuarioRepository.cs"
+            "src/Infrastructure/**/Usuarios/Repositories/UsuarioRepository.cs",
+            "src/Infrastructure/**/Migrations/**"
+          ]
+        },
+        {
+          "condition": "provider != \"efcore\" && provider != \"dapper\"",
+          "exclude": [
+            "src/Infrastructure/**/DbConnectionFactory.cs"
+          ]
+        },
+        {
+          "condition": "provider == \"nhibernate\"",
+          "exclude": [
+            "src/Domain/**/Entities/Usuario.cs"
           ]
         },
         {
@@ -179,9 +193,9 @@
       ]
     },
     {
-      "source": "template-assets/nhibernate",
+      "source": "template-assets/mongo",
       "target": "./",
-      "condition": "provider == \"nhibernate\""
+      "condition": "provider == \"mongo\""
     },
     {
       "source": "template-assets/dapper",
@@ -189,9 +203,9 @@
       "condition": "provider == \"dapper\""
     },
     {
-      "source": "template-assets/mongo",
+      "source": "template-assets/nhibernate",
       "target": "./",
-      "condition": "provider == \"mongo\""
+      "condition": "provider == \"nhibernate\""
     }
   ]
 }

@@ -22,6 +22,8 @@ public sealed class UsuarioDapperRepository(DapperConnection holder) : IUsuarioD
     public void Remove(Usuario entity) => connection.Execute("DELETE FROM Usuarios WHERE Id = @Id", new { entity.Id });
     public Task<bool> ExistePorEmailAsync(string email, CancellationToken cancellationToken = default)
         => connection.ExecuteScalarAsync<bool>(new CommandDefinition("SELECT CASE WHEN EXISTS (SELECT 1 FROM Usuarios WHERE Email = @email) THEN 1 ELSE 0 END", new { email = email.Trim().ToLower() }, cancellationToken: cancellationToken));
+    public Task<bool> ExisteAlgumAsync(CancellationToken cancellationToken = default)
+        => connection.ExecuteScalarAsync<bool>(new CommandDefinition("SELECT CASE WHEN EXISTS (SELECT 1 FROM Usuarios) THEN 1 ELSE 0 END", cancellationToken: cancellationToken));
     public Task<Usuario?> BuscarPorEmailParaAutenticacaoAsync(string email, CancellationToken cancellationToken = default)
         => connection.QuerySingleOrDefaultAsync<Usuario>(new CommandDefinition($"SELECT {Columns} FROM Usuarios WHERE Email = @email", new { email = email.Trim().ToLower() }, cancellationToken: cancellationToken));
     public ListarUsuariosQuery Filtrar(ListarUsuariosFilter filter) => new() { Username = filter.Username, Email = filter.Email, Ativo = filter.Ativo };
