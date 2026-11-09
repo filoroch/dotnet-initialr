@@ -6,9 +6,12 @@ métricas e logs, exportados via OTLP.
 A instrumentação atual cobre:
 
 - ASP.NET Core e HttpClient;
-- EF Core, incluindo spans de comandos SQL;
-- SqlClient, para acessos diretos via Dapper ou NHibernate quando o provider
-  utilizado for SQL Server.
+- EF Core, incluindo o texto dos comandos SQL (via `EnrichWithIDbCommand`;
+  `db.system` ainda é fixado em `sqlite` na configuração atual).
+
+Acessos diretos fora do EF Core (Dapper, NHibernate, Mongo) ainda não possuem
+instrumentação dedicada de spans de banco; para SQL Server/PostgreSQL isso
+exigirá `AddSqlClientInstrumentation()`/`AddNpgsqlInstrumentation()`.
 
 As configurações ficam nos arquivos centralizados em
 `src/IoC/Filoroch.Template.IoC/Settings`, nas seções `Serilog`, `OpenTelemetry`

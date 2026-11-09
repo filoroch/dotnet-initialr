@@ -7,6 +7,7 @@
 - `Infrastructure`: persistência e implementações por contexto.
 - `CrossCutting`: exceções, paginação, Unit of Work e bibliotecas genéricas de persistência.
 - `IoC`: composição modular, settings e bootstrap compartilhado.
+- `Apps`: API, Workers, Jobs, Consumers e MCP.
 
 ## Persistência
 
@@ -40,7 +41,8 @@ ou por argumentos de linha de comando.
 As URLs dos entrypoints HTTP ficam em `Entrypoints.Api.Urls`; o bootstrap da
 API aplica essas URLs antes da inicialização do host. O `launchSettings.json`
 continua útil para perfis locais, mas não é a fonte principal da configuração.
-- `Apps`: API, Workers, Jobs, Consumers e MCP.
+
+## Aplicações
 
 Cada entrypoint possui seu próprio Dockerfile em `src/Apps`. A imagem publica
 somente o projeto correspondente, mantendo settings, Serilog e OpenTelemetry
